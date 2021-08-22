@@ -44,4 +44,12 @@ public class EmployeeService {
         current.setEmail(update.getEmail());
         repository.save(current);
     }
+
+    public void deleteEmployee(long id) {
+        Optional<Employee> exist = repository.findById(id);
+        if (!exist.isPresent()) {
+            throw new EntityNotFoundException("Employee not found!");
+        }
+        repository.deleteById(id);
+    }
 }
