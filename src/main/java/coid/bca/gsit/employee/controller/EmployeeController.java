@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,21 @@ public class EmployeeController {
             service.createEmployee(employee);
             return ResponseEntity.status(HttpStatus.CREATED).body(employee);
         } catch (EntityExistsException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateEmployee(@PathVariable("id") long id, @RequestBody Employee updatedEmployee) {
+        try {
+            updatedEmployee.setId(id);
+            service.updateEmployee(updatedEmployee);
+            return ResponseEntity.ok().body(updatedEmployee);
+        } catch (EntityNotFoundException e) {
             Map<String, String> error = new HashMap<>();
             error.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(error);

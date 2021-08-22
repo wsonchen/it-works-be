@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,5 +32,16 @@ public class EmployeeService {
             throw new EntityExistsException("Email already registered!");
         }
         repository.save(employee);
+    }
+
+    public void updateEmployee(Employee update) {
+        Optional<Employee> exist = repository.findById(update.getId());
+        if (!exist.isPresent()) {
+            throw new EntityNotFoundException("Employee not found!");
+        }
+        Employee current = exist.get();
+        current.setName(update.getName());
+        current.setEmail(update.getEmail());
+        repository.save(current);
     }
 }
